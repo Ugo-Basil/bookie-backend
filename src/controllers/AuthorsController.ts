@@ -6,21 +6,67 @@ import { Response, Request } from "express";
 
 
 export class AuthorsController {
-    async getAuthors(req, res) {
-        const builder = await AppDataSource.getRepository(Author).createQueryBuilder().orderBy("id", "DESC")
-        const { items: authors, paginationInfo } = await PageUtil.paginate(builder, req, res)
-        return ResponseUtil.sendResponse(res, authors, paginationInfo)
+  async getAuthors(req, res) {
+    const builder = await AppDataSource.getRepository(Author)
+      .createQueryBuilder()
+      .orderBy("id", "DESC");
+    const { items: authors, paginationInfo } = await PageUtil.paginate(
+      builder,
+      req,
+      res
+    );
+    return ResponseUtil.sendResponse(res, authors, paginationInfo);
+  }
+
+  async getAuthor(req: Request, res: Response): Promise<Response> {
+    const author = await AppDataSource.getRepository(Author).findOneByOrFail({
+      id: parseInt(req.params.id),
+    });
+    if (!author) {
+      return ResponseUtil.sendError(res, "Author not found", 404);
     }
 
-    async getAuthor(req: Request, res: Response): Promise<Response>{
-        const author = await AppDataSource.getRepository(Author).findOneByOrFail({
-            id: parseInt(req.params.id),
-        })
-        if (!author) {
-            return ResponseUtil.sendError(res, "Author not found", 404)
-        }
+    author.image = `http://localhost:3000/images/authors/${author.image}`;
+    return ResponseUtil.sendResponse(res, author, 200);
+  }
 
-        author.image = `http://localhost:3000/images/authors/${author.image}`
-        return ResponseUtil.sendResponse(res, author, 200)
+  async createAuthor(req: Request, res: Response) {
+    const authorData = req.body;
+
+    authorData.image = req.file?.filename;
+    const repo = AppDataSource.getRepository(Author);
+    const author = repo.create(authorData);
+    const result = await repo.save(author);
+    return ResponseUtil.sendResponse(res, result, 201);
+  }
+
+  async updateAuthor(req: Request, res: Response) {
+    const { id } = req.params;
+    const authorData = req.body;
+    const repo = AppDataSource.getRepository(Author);
+    const author = await repo.findOneBy({
+      id: parseInt(req.params.id),
+    });
+    if (!author) {
+      return ResponseUtil.sendError(res, "Author not found", 404);
     }
+
+    repo.merge(author, authorData);
+    const result = await repo.save(author);
+    return ResponseUtil.sendResponse(res, result, 200);
+  }
+
+  async deleteAuthor(req: Request, res: Response) {
+    const { id } = req.params;
+    const repo = AppDataSource.getRepository(Author);
+    const author = await repo.findOneBy({
+      id: parseInt(req.params.id),
+    });
+    if (!author) {
+      return ResponseUtil.sendError(res, "Author not found", 404);
+    }
+
+    await repo.remove(author);
+    return ResponseUtil.sendResponse(res, null, 204);
+  }
 }
