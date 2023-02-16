@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { AppDataSource } from "../database/data-source";
-import { User } from "../entitites/Users";
+import { User } from "../entities/Users";
 import { ResponseUtil } from "../utils/Response";
 import * as dotenv from "dotenv";
 

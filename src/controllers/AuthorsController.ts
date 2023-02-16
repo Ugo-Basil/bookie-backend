@@ -1,6 +1,6 @@
 import { AppDataSource } from "../database/data-source";
 import { PageUtil } from "../database/Paginator";
-import { Author } from "../entitites/Author";
+import { Author } from "../entities/Author";
 import { ResponseUtil } from "../utils/Response";
 import { Response, Request } from "express";
 
