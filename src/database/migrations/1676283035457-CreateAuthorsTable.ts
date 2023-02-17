@@ -1,7 +1,7 @@
-import { DBTable } from "../../constants/DBTable";
 import { MigrationInterface, QueryRunner, Table } from "typeorm";
+import { DBTable } from "../../constants/DBTable";
 
-export class CreateAuthorsTable1676283035457 implements MigrationInterface {
+export class CreateAuthorsTable1589517774220 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -14,7 +14,6 @@ export class CreateAuthorsTable1676283035457 implements MigrationInterface {
             isGenerated: true,
             generationStrategy: "increment",
           },
-
           {
             name: "name",
             type: "varchar",
@@ -32,7 +31,6 @@ export class CreateAuthorsTable1676283035457 implements MigrationInterface {
             name: "bio",
             type: "text",
             isNullable: true,
-            
           },
           {
             name: "image",
@@ -40,7 +38,6 @@ export class CreateAuthorsTable1676283035457 implements MigrationInterface {
             length: "255",
             isNullable: true,
           },
-
           {
             name: "createdAt",
             type: "datetime",
